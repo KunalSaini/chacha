@@ -1,5 +1,4 @@
-import * as d3 from 'd3';
-// import Account from './Account';
+import editor from './editor';
 
 function component() {
   const element = document.createElement('div');
@@ -8,11 +7,7 @@ function component() {
   return element;
 }
 
-console.log(d3);
-d3.select('body').append('svg')
-.attr('width', 50)
-.attr('height', 50)
-.append('circle')
+editor.append('circle')
 .attr('cx', 25)
 .attr('cy', 25)
 .attr('r', 25)
