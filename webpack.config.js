@@ -1,7 +1,7 @@
 var path = require('path');
 
 module.exports = {
-  // devtool: 'sourcemap',
+  devtool: 'sourcemap',
   context: path.resolve('app'),
   entry: ['./index.js'],
   output: {
