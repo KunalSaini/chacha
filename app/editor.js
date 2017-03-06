@@ -1,15 +1,15 @@
 import * as d3 from 'd3';
 
-console.log(screen.availHeight);
-const viewBox = `0 0 ${screen.availWidth} ${screen.availHeight}`;
-const width = screen.availWidth;
-const height = screen.availHeight;
+const width = screen.availWidth - 650;
+const height = screen.availHeight - 500;
+const viewBox = `0 0 ${width} ${height}`;
 
 const editor = d3.select('body').append('svg')
 .attr('id', 'editor')
 .attr('viewBox', viewBox)
 .attr('width', width)
-.attr('height', height);
+.attr('height', height)
+.attr('style', 'float:right');
 
 editor.append('rect')
 .attr('x', 0)
