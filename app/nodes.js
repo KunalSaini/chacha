@@ -8,7 +8,8 @@ const testNodes = [
     topic: '',
     x: 300,
     y: 300,
-    inputs: '1',
+    inputs: '2',
+    outputs: '1',
     type: 'debug',
     active: true,
     wires: [],
@@ -19,7 +20,8 @@ const testNodes = [
     topic: '',
     x: 100,
     y: 200,
-    inputs: '1',
+    inputs: '2',
+    outputs: '1',
     type: 'debug',
     active: true,
     wires: [],
@@ -30,7 +32,8 @@ const testNodes = [
     topic: '',
     x: 100,
     y: 250,
-    inputs: '1',
+    inputs: '2',
+    outputs: '1',
     type: 'debug',
     active: true,
     wires: [],
@@ -81,6 +84,24 @@ function generateNodesOn(editor, nodes = testNodes) {
         .attr('width', dim.width)
         .style('fill', 'none')
         .attr('stroke', 'black');
+
+    nodeContainer.selectAll('.inputPorts').data(d3.range(1, parseInt(node.inputs, 10) + 1, 1)).enter().append('rect')
+      .attr('class', 'inputPorts')
+      .attr('x', 5)
+      .attr('y', d => (d + 1) * 10)
+      .attr('height', 5)
+      .attr('width', 5)
+      .style('fill', 'black')
+      .attr('stroke', 'black');
+
+    nodeContainer.selectAll('.outputPorts').data(d3.range(1, parseInt(node.outputs, 10) + 1, 1)).enter().append('rect')
+      .attr('class', 'outputPorts')
+      .attr('x', dim.width)
+      .attr('y', d => (d + 1) * 10)
+      .attr('height', 5)
+      .attr('width', 5)
+      .style('fill', 'red')
+      .attr('stroke', 'red');
   });
   return groups;
 }
