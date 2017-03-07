@@ -1,4 +1,4 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
   devtool: 'sourcemap',
@@ -14,23 +14,23 @@ module.exports = {
   },
   watch: true,
   module: {
-  loaders: [
+    loaders: [
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015']
-        }
+          presets: ['es2015'],
+        },
       },
       {
         test: /\.jsx?$/,
-        enforce: "pre",
+        enforce: 'pre',
         loaders: ['eslint-loader'],
-        //include: path.join(__dirname, 'app'),
+        // include: path.join(__dirname, 'app'),
         exclude: /(node_modules|bower_components)/,
-        //exclude: path.join(__dirname, 'src/app/container')
-      }
-    ]
-  }
+        // exclude: path.join(__dirname, 'src/app/container')
+      },
+    ],
+  },
 };
