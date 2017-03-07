@@ -1,5 +1,14 @@
 import * as d3 from 'd3';
 
+
+function getNodeAndPort(idstring) {
+  return {
+    id: idstring.split('_')[1],
+    port: idstring.split('_')[2],
+  };
+}
+
+let startNode = {};
 function dragstarted() {
   d3.event.sourceEvent.stopPropagation();
   const x = d3.mouse(d3.select('#editor').node())[0];
@@ -10,6 +19,7 @@ function dragstarted() {
     .attr('x2', x)
     .attr('y2', y)
     .style('display', 'block');
+  startNode = getNodeAndPort(d3.event.sourceEvent.target.id);
 }
 
 function dragged() {
@@ -24,8 +34,14 @@ function dragended() {
     const y1 = d3.select('#dummyPath').attr('y1');
     const x2 = d3.mouse(d3.select('#editor').node())[0];
     const y2 = d3.mouse(d3.select('#editor').node())[1];
+    const endNode = getNodeAndPort(d3.event.sourceEvent.target.id);
     d3.select('svg')
         .append('line')
+        .datum({
+          endNode,
+          startNode,
+        })
+        .attr('id', `line_${startNode.id}_${startNode.port}_${endNode.id}_${endNode.port}`)
         .attr('class', 'line')
         .attr('x1', x1)
         .attr('y1', y1)

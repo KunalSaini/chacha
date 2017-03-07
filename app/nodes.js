@@ -4,15 +4,45 @@ import trace from './trace';
 
 let nodeRep = [];
 function dragstarted() {
+  d3.event.sourceEvent.stopPropagation();
   d3.select(this).attr('transform', d => `translate(${d.x},${d.y})`);
   d3.select(this).raise().classed('active', true);
 }
 
+function getNodeIdFromGroup(g) {
+  return g.attr('id').split('_')[1];
+}
+
+function updateLines(g) {
+  d3.selectAll('line').each((lineData) => {
+    if (lineData) {
+      const svg = d3.select('svg').node();
+      let pt = svg.createSVGPoint();
+      const line = d3.select(`#line_${lineData.startNode.id}_${lineData.startNode.port}_${lineData.endNode.id}_${lineData.endNode.port}`);
+      if (lineData.startNode.id === getNodeIdFromGroup(g)) {
+        const outport = g.select(`#outputPort_${lineData.startNode.id}_${lineData.startNode.port}`);
+        pt.x = parseInt(outport.attr('cx'), 10);
+        pt.y = parseInt(outport.attr('cy'), 10);
+        pt = pt.matrixTransform(g.node().getCTM());
+        line.attr('x1', pt.x).attr('y1', pt.y);
+      } else if (lineData.endNode.id === getNodeIdFromGroup(g)) {
+        const inport = g.select(`#inputPort_${lineData.endNode.id}_${lineData.endNode.port}`);
+        pt.x = parseInt(inport.attr('x'), 10);
+        pt.y = parseInt(inport.attr('y'), 10);
+        pt = pt.matrixTransform(g.node().getCTM());
+        line.attr('x2', pt.x).attr('y2', pt.y);
+      }
+    }
+  });
+}
+
 function dragged(d) {
+  const g = d3.select(this);
   d.x = d3.event.x; // eslint-disable-line no-param-reassign
   d.y = d3.event.y; // eslint-disable-line no-param-reassign
-  d3.select(this).attr('transform', `translate(${d3.event.x},${d3.event.y})`);
+  g.attr('transform', `translate(${d3.event.x},${d3.event.y})`);
   trace(nodeRep);
+  updateLines(g);
 }
 
 function dragended() {
@@ -44,11 +74,16 @@ function generateNodesOn(editor, nodes) {
         .style('fill', 'none')
         .attr('stroke', 'black');
 
-    nodeContainer.selectAll('.inputPorts').data(d3.range(1, parseInt(node.inputs, 10) + 1, 1)).enter()
+    node.inputPorts = // eslint-disable-line no-param-reassign
+          _.range(1, parseInt(node.inputs, 10) + 1, 1)
+          .map(x => ({ id: node.id, port: x }));
+
+    nodeContainer.selectAll('.inputPorts').data(node.inputPorts).enter()
     .append('rect')
       .attr('class', 'inputPorts')
+      .attr('id', d => `inputPort_${d.id}_${d.port}`)
       .attr('x', 5)
-      .attr('y', d => (d + 1) * 10)
+      .attr('y', d => (d.port + 1) * 10)
       .attr('width', 5)
       .attr('height', 5)
       .style('fill', 'black')
