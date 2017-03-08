@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import _ from 'lodash';
 import appEvents from './appEvents';
 import trace from './trace';
+import nodeStyle from './styles/nodes.css';  // eslint-disable-line no-unused-vars
 
 let nodeRep = [];
 function dragstarted() {
@@ -55,56 +56,50 @@ const dragBehavior = d3.drag()
   .on('drag', dragged)
   .on('end', dragended);
 
+function getLength(name) {
+  return name.length * 8;
+}
+
 function generateNodesOn(editor, nodes) {
   nodeRep = nodes;
-  const groups = editor.selectAll('g').data(nodes).enter().append('g')
+  _.map(nodeRep, (node) => {
+    node.inputPorts = // eslint-disable-line no-param-reassign
+    _.range(1, parseInt(node.inputs, 10) + 1, 1)
+          .map(x => ({ id: node.id, name: node.name, port: x }));
+
+    node.outputPorts = // eslint-disable-line no-param-reassign
+    _.range(1, parseInt(node.outputs, 10) + 1, 1)
+          .map(x => ({ id: node.id, name: node.name, port: x }));
+  });
+  const groupSelection = editor.selectAll('g').data(nodes, d => d.id).enter();
+  const groups = groupSelection.append('g')
   .attr('id', d => `node_${d.id}`)
   .attr('transform', d => `translate(${d.x},${d.y})`)
   .call(dragBehavior);
-  nodeRep.forEach((node) => {
-    const nodeContainer = d3.select(`#node_${node.id}`);
-    const tex = nodeContainer.selectAll('text').data([node]).enter().append('text')
-          .attr('text-anchor', 'start')
-          .style('fill', 'steelblue')
-          .text(() => node.name);
 
-    const dim = tex.node().getBBox();
-    nodeContainer.selectAll('rect').data([node]).enter().append('rect')
-        .attr('height', dim.height)
-        .attr('width', dim.width)
-        .style('fill', 'none')
-        .attr('stroke', 'black');
+  groups.append('text')
+  .attr('text-anchor', 'start')
+  .attr('class', 'nodeText')
+  .text(d => d.name);
 
-    node.inputPorts = // eslint-disable-line no-param-reassign
-          _.range(1, parseInt(node.inputs, 10) + 1, 1)
-          .map(x => ({ id: node.id, port: x }));
+  groups.append('rect')
+  .attr('class', 'node')
+  .attr('width', d => getLength(d.name));
 
-    nodeContainer.selectAll('.inputPorts').data(node.inputPorts).enter()
-    .append('rect')
-      .attr('class', 'inputPorts')
-      .attr('id', d => `inputPort_${d.id}_${d.port}`)
-      .attr('x', 5)
-      .attr('y', d => (d.port + 1) * 10)
-      .attr('width', 5)
-      .attr('height', 5)
-      .style('fill', 'black')
-      .style('cursor', 'crosshair')
-      .attr('stroke', 'black');
+  groups.selectAll('rect.inputPorts').data(d => d.inputPorts).enter().append('rect')
+  .attr('class', 'inputPorts')
+  .attr('id', d => `inputPort_${d.id}_${d.port}`)
+  .attr('x', 5)
+  .attr('y', d => (d.port + 1) * 10);
 
-    node.outputPorts = // eslint-disable-line no-param-reassign
-      _.range(1, parseInt(node.outputs, 10) + 1, 1)
-      .map(x => ({ id: node.id, port: x }));
+  groups.selectAll('circle.outputPorts').data(d => d.inputPorts).enter().append('circle')
+  .attr('class', 'outputPorts')
+  .attr('id', d => `outputPort_${d.id}_${d.port}`)
+  .attr('cx', d => getLength(d.name))
+  .attr('cy', d => (d.port + 1) * 10)
+  .attr('r', 5);
 
-    nodeContainer.selectAll('.outputPorts').data(node.outputPorts).enter().append('circle')
-      .attr('class', 'outputPorts')
-      .attr('id', d => `outputPort_${d.id}_${d.port}`)
-      .attr('cx', dim.width)
-      .attr('cy', d => (d.port + 1) * 10)
-      .attr('r', 5)
-      .style('fill', 'red')
-      .style('cursor', 'crosshair')
-      .attr('stroke', 'red');
-  });
+  editor.selectAll('g').data(nodes, d => d.id).exit().remove();
   return groups;
 }
 

@@ -75,8 +75,9 @@ function init(editor) {
 
   editor.selectAll('.outputPorts').call(portDragBehavior);
 }
-function update() {
+function update(editor) {
   // editor.selectAll('g').each(d => console.log(d));
+  editor.selectAll('.outputPorts').call(portDragBehavior);
 }
 
 export { update, init };
