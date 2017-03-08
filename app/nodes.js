@@ -5,6 +5,7 @@ import trace from './trace';
 import nodeStyle from './styles/nodes.css';  // eslint-disable-line no-unused-vars
 
 let nodeRep = [];
+let nodeEditor = {};
 function dragstarted() {
   d3.event.sourceEvent.stopPropagation();
   d3.select(this).attr('transform', d => `translate(${d.x},${d.y})`);
@@ -22,7 +23,6 @@ function dragged(d) {
   g.attr('transform', `translate(${d3.event.x},${d3.event.y})`);
   trace(nodeRep);
   appEvents.emit(appEvents.nodeMoved, getNodeIdFromGroup(g), g.node().getCTM());
-  // updateLines(g);
 }
 
 function dragended() {
@@ -38,8 +38,20 @@ function getLength(name) {
   return name.length * 8;
 }
 
+function nodeRemove(id) {
+  _.remove(nodeRep, d => d.id === id);
+  generateNodesOn(nodeEditor, nodeRep); // eslint-disable-line no-use-before-define
+  appEvents.emit(appEvents.nodeRemove, id);
+}
+
+function close(d) {
+  d3.event.stopPropagation();
+  nodeRemove(d.id);
+}
+
 function generateNodesOn(editor, nodes) {
   nodeRep = nodes;
+  nodeEditor = editor;
   _.map(nodeRep, (node) => {
     node.inputPorts = // eslint-disable-line no-param-reassign
     _.range(1, parseInt(node.inputs, 10) + 1, 1)
@@ -76,6 +88,12 @@ function generateNodesOn(editor, nodes) {
   .attr('cx', d => getLength(d.name))
   .attr('cy', d => (d.port + 1) * 10)
   .attr('r', 5);
+
+  groups.append('text')
+  .attr('class', 'closeButton')
+  .attr('x', d => getLength(d.name) + 5)
+  .text('\uf00d')
+  .on('click', close);
 
   editor.selectAll('g').data(nodes, d => d.id).exit().remove();
   return groups;
