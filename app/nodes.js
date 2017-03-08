@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import _ from 'lodash';
+import appEvents from './appEvents';
 import trace from './trace';
 
 let nodeRep = [];
@@ -106,5 +107,16 @@ function generateNodesOn(editor, nodes) {
   });
   return groups;
 }
+
+appEvents.on(appEvents.nodesConnected, (startNode, endNode) => {
+  const node = _.find(nodeRep, { id: startNode.id });
+  const wirePort = node.wires[startNode.port - 1];
+  if (wirePort) {
+    wirePort.push({ node: endNode.id, port: endNode.port });
+  } else {
+    node.wires[startNode.port - 1] = [{ node: endNode.id, port: endNode.port }];
+  }
+  trace(nodeRep);
+});
 
 export { generateNodesOn as default };

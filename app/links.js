@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import appEvents from './appEvents';
 import linksStyle from './styles/links.css'; // eslint-disable-line no-unused-vars
 
 function getNodeAndPort(idstring) {
@@ -47,6 +48,7 @@ function dragended() {
         .attr('y1', y1)
         .attr('x2', x2)
         .attr('y2', y2);
+    appEvents.emit(appEvents.nodesConnected, startNode, endNode);
   }
   d3.select('#dummyPath')
   .style('display', 'none')

@@ -11,7 +11,7 @@ const testNodes = [
     x: 300,
     y: 300,
     inputs: '2',
-    outputs: '1',
+    outputs: '2',
     type: 'debug',
     active: true,
     wires: [],
