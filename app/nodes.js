@@ -92,7 +92,7 @@ function generateNodesOn(editor, nodes) {
 
     node.outputPorts = // eslint-disable-line no-param-reassign
       _.range(1, parseInt(node.outputs, 10) + 1, 1)
-      .map(x => ({ id: node.id, nodeX: node.x, nodeY: node.y, port: x }));
+      .map(x => ({ id: node.id, port: x }));
 
     nodeContainer.selectAll('.outputPorts').data(node.outputPorts).enter().append('circle')
       .attr('class', 'outputPorts')
