@@ -15,28 +15,31 @@ function getNodeIdFromGroup(g) {
   return g.attr('id').split('_')[1];
 }
 
-function updateLines(g) {
-  d3.selectAll('line').each((lineData) => {
-    if (lineData) {
-      const svg = d3.select('svg').node();
-      let pt = svg.createSVGPoint();
-      const line = d3.select(`#line_${lineData.startNode.id}_${lineData.startNode.port}_${lineData.endNode.id}_${lineData.endNode.port}`);
-      if (lineData.startNode.id === getNodeIdFromGroup(g)) {
-        const outport = g.select(`#outputPort_${lineData.startNode.id}_${lineData.startNode.port}`);
-        pt.x = parseInt(outport.attr('cx'), 10);
-        pt.y = parseInt(outport.attr('cy'), 10);
-        pt = pt.matrixTransform(g.node().getCTM());
-        line.attr('x1', pt.x).attr('y1', pt.y);
-      } else if (lineData.endNode.id === getNodeIdFromGroup(g)) {
-        const inport = g.select(`#inputPort_${lineData.endNode.id}_${lineData.endNode.port}`);
-        pt.x = parseInt(inport.attr('x'), 10);
-        pt.y = parseInt(inport.attr('y'), 10);
-        pt = pt.matrixTransform(g.node().getCTM());
-        line.attr('x2', pt.x).attr('y2', pt.y);
-      }
-    }
-  });
-}
+// function updateLines(g) {
+//   d3.selectAll('line').each((lineData) => {
+//     if (lineData) {
+//       const svg = d3.select('svg').node();
+//       let pt = svg.createSVGPoint();
+// const line = d3
+// .select(
+// `#line_${lineData.startNode.id}_${lineData.startNode.port}_
+// ${lineData.endNode.id}_${lineData.endNode.port}`);
+//       if (lineData.startNode.id === getNodeIdFromGroup(g)) {
+// const outport = g.select(`#outputPort_${lineData.startNode.id}_${lineData.startNode.port}`);
+//         pt.x = parseInt(outport.attr('cx'), 10);
+//         pt.y = parseInt(outport.attr('cy'), 10);
+//         pt = pt.matrixTransform(g.node().getCTM());
+//         line.attr('x1', pt.x).attr('y1', pt.y);
+//       } else if (lineData.endNode.id === getNodeIdFromGroup(g)) {
+//         const inport = g.select(`#inputPort_${lineData.endNode.id}_${lineData.endNode.port}`);
+//         pt.x = parseInt(inport.attr('x'), 10);
+//         pt.y = parseInt(inport.attr('y'), 10);
+//         pt = pt.matrixTransform(g.node().getCTM());
+//         line.attr('x2', pt.x).attr('y2', pt.y);
+//       }
+//     }
+//   });
+// }
 
 function dragged(d) {
   const g = d3.select(this);
@@ -44,7 +47,8 @@ function dragged(d) {
   d.y = d3.event.y; // eslint-disable-line no-param-reassign
   g.attr('transform', `translate(${d3.event.x},${d3.event.y})`);
   trace(nodeRep);
-  updateLines(g);
+  appEvents.emit(appEvents.nodeMoved, getNodeIdFromGroup(g), g.node().getCTM());
+  // updateLines(g);
 }
 
 function dragended() {

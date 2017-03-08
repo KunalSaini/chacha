@@ -2,6 +2,31 @@ import * as d3 from 'd3';
 import appEvents from './appEvents';
 import linksStyle from './styles/links.css'; // eslint-disable-line no-unused-vars
 
+function updateLines(nodeId, ctm) {
+  d3.selectAll('line').each((lineData) => {
+    if (lineData) {
+      const svg = d3.select('svg').node();
+      let pt = svg.createSVGPoint();
+      const line = d3.select(`#line_${lineData.startNode.id}_${lineData.startNode.port}_${lineData.endNode.id}_${lineData.endNode.port}`);
+      if (lineData.startNode.id === nodeId) {
+        const outport = d3.select(`#outputPort_${lineData.startNode.id}_${lineData.startNode.port}`);
+        pt.x = parseInt(outport.attr('cx'), 10);
+        pt.y = parseInt(outport.attr('cy'), 10);
+        pt = pt.matrixTransform(ctm); // g.node().getCTM()
+        line.attr('x1', pt.x).attr('y1', pt.y);
+      } else if (lineData.endNode.id === nodeId) {
+        const inport = d3.select(`#inputPort_${lineData.endNode.id}_${lineData.endNode.port}`);
+        pt.x = parseInt(inport.attr('x'), 10);
+        pt.y = parseInt(inport.attr('y'), 10);
+        pt = pt.matrixTransform(ctm);
+        line.attr('x2', pt.x).attr('y2', pt.y);
+      }
+    }
+  });
+}
+
+appEvents.on(appEvents.nodeMoved, updateLines);
+
 function getNodeAndPort(idstring) {
   return {
     id: idstring.split('_')[1],
