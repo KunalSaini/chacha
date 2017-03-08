@@ -19,6 +19,9 @@
   cursor: crosshair;
 }
 .closeButton {
-    font-size: 1em;
-    font-family: 'FontAwesome';
+  font-size: 1em;
+  font-family: 'FontAwesome';
+}
+.active {
+  font-weight: bolder;
 }
