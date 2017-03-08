@@ -24,9 +24,18 @@ function updateLines(nodeId, ctm) {
     }
   });
 }
+function removeLines(nodeId) {
+  d3.selectAll('line').each((lineData) => {
+    if (lineData) {
+      if (lineData.startNode.id === nodeId || lineData.endNode.id === nodeId) {
+        d3.select(`#line_${lineData.startNode.id}_${lineData.startNode.port}_${lineData.endNode.id}_${lineData.endNode.port}`).remove();
+      }
+    }
+  });
+}
 
 appEvents.on(appEvents.nodeMoved, updateLines);
-
+appEvents.on(appEvents.nodeRemove, removeLines);
 function getNodeAndPort(idstring) {
   return {
     id: idstring.split('_')[1],
