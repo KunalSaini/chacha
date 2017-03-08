@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-
+import linksStyle from './styles/links.css'; // eslint-disable-line no-unused-vars
 
 function getNodeAndPort(idstring) {
   return {

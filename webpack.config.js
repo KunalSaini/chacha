@@ -1,4 +1,5 @@
 const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   devtool: 'sourcemap',
@@ -7,14 +8,14 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/assets/js/',
+    publicPath: '/assets/',
   },
   devServer: {
     contentBase: 'public',
   },
   watch: true,
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
@@ -27,10 +28,18 @@ module.exports = {
         test: /\.jsx?$/,
         enforce: 'pre',
         loaders: ['eslint-loader'],
-        // include: path.join(__dirname, 'app'),
         exclude: /(node_modules|bower_components)/,
-        // exclude: path.join(__dirname, 'src/app/container')
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader',
+        }),
       },
     ],
   },
+  plugins: [
+    new ExtractTextPlugin('styles.css'),
+  ],
 };

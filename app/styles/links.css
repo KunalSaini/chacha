@@ -1,0 +1,10 @@
+#dummyPath {
+  stroke: green;
+  stroke-width: 3px;
+  stroke-dasharray: 5 7;
+}
+
+.line {
+  stroke: blue;
+  stroke-width: 3px;
+}
