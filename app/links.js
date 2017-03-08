@@ -12,7 +12,7 @@ function updateLines(nodeId, ctm) {
         const outport = d3.select(`#outputPort_${lineData.startNode.id}_${lineData.startNode.port}`);
         pt.x = parseInt(outport.attr('cx'), 10);
         pt.y = parseInt(outport.attr('cy'), 10);
-        pt = pt.matrixTransform(ctm); // g.node().getCTM()
+        pt = pt.matrixTransform(ctm);
         line.attr('x1', pt.x).attr('y1', pt.y);
       } else if (lineData.endNode.id === nodeId) {
         const inport = d3.select(`#inputPort_${lineData.endNode.id}_${lineData.endNode.port}`);
