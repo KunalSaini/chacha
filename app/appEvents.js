@@ -1,13 +1,9 @@
 import EventEmitter from 'events';
 
-const nodesConnected = 'nodesConnected';
-
-class AppEvents extends EventEmitter {
-  static get nodesConnected() {
-    return nodesConnected;
-  }
-}
+class AppEvents extends EventEmitter {}
 
 const applicationEvents = new AppEvents();
+applicationEvents.nodesConnected = 'nodesConnected';
+applicationEvents.nodeMoved = 'nodeMoved';
 
 export default applicationEvents;
