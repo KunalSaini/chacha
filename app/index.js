@@ -4,6 +4,7 @@ import nodeGenerator from './nodes';
 import * as links from './links';
 import style from './styles/index.css';// eslint-disable-line no-unused-vars
 import pallet from './pallet';// eslint-disable-line no-unused-vars
+import appEvents from './appEvents';
 
 const testNodes = [
   {
@@ -45,6 +46,11 @@ const testNodes = [
   },
 ];
 
+function getNextId() {
+  const maxId = _.maxBy(testNodes, n => parseInt(n.id, 10)).id;
+  return `${parseInt(maxId, 10) + 1}`;
+}
+
 nodeGenerator(editor, testNodes);
 links.init(editor);
 
@@ -68,3 +74,11 @@ nodeGenerator(editor, testNodes);
 _.remove(testNodes, n => n.id === '851');
 nodeGenerator(editor, testNodes);
 links.update(editor);
+
+appEvents.on(appEvents.nodeAdd, (node) => {
+  node.id = getNextId(); // eslint-disable-line no-param-reassign
+  node.wires = []; // eslint-disable-line no-param-reassign
+  testNodes.push(node);
+  nodeGenerator(editor, testNodes);
+  links.update(editor);
+});

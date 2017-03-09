@@ -8,7 +8,7 @@ requires [node](https://nodejs.org/en/) v7 or higher
 ### To Do
 - [ ] edge deletion support
 - [ ] curved path instead of lines for edges
-- [ ] drag and drop from outside the editor
+- [x] drag and drop from outside the editor
 - [ ] grid lines
 - [ ] editor zoom
 - [ ] tabs
