@@ -82,7 +82,7 @@ function generateNodesOn(editor, nodes) {
   .attr('x', 5)
   .attr('y', d => (d.port + 1) * 10);
 
-  groups.selectAll('circle.outputPorts').data(d => d.inputPorts).enter().append('circle')
+  groups.selectAll('circle.outputPorts').data(d => d.outputPorts).enter().append('circle')
   .attr('class', 'outputPorts')
   .attr('id', d => `outputPort_${d.id}_${d.port}`)
   .attr('cx', d => getLength(d.name))
