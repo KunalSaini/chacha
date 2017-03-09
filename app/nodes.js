@@ -34,8 +34,8 @@ const dragBehavior = d3.drag()
   .on('drag', dragged)
   .on('end', dragended);
 
-function getLength(name) {
-  return name.length * 8;
+function getLength(d) {
+  return d3.select(`text#text_${d.id}`).node().getBBox().width;
 }
 
 function nodeRemove(id) {
@@ -69,12 +69,14 @@ function generateNodesOn(editor, nodes) {
 
   groups.append('text')
   .attr('text-anchor', 'start')
+  .attr('id', d => `text_${d.id}`)
   .attr('class', 'nodeText')
+  .attr('dy', '.85em')
   .text(d => d.name);
 
   groups.append('rect')
   .attr('class', 'node')
-  .attr('width', d => getLength(d.name));
+  .attr('width', d => getLength(d));
 
   groups.selectAll('rect.inputPorts').data(d => d.inputPorts).enter().append('rect')
   .attr('class', 'inputPorts')
@@ -85,13 +87,13 @@ function generateNodesOn(editor, nodes) {
   groups.selectAll('circle.outputPorts').data(d => d.outputPorts).enter().append('circle')
   .attr('class', 'outputPorts')
   .attr('id', d => `outputPort_${d.id}_${d.port}`)
-  .attr('cx', d => getLength(d.name))
+  .attr('cx', d => getLength(d))
   .attr('cy', d => (d.port + 1) * 10)
   .attr('r', 5);
 
   groups.append('text')
   .attr('class', 'closeButton')
-  .attr('x', d => getLength(d.name) + 5)
+  .attr('x', d => getLength(d) + 5)
   .text('\uf00d')
   .on('click', close);
 
