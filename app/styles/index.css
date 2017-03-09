@@ -4,13 +4,14 @@ div.wrapper {
   width: 100%;
 }
 textarea#output.output {
-    width: 20%;
+    width: 18%;
     float:left;
 }
 
 div.pallet {
-    width: 20%;
+    width: 18%;
     float:left;
+    border-style: solid;
 }
 div.canvas {
   width: 60%;

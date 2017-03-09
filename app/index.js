@@ -3,6 +3,7 @@ import editor from './editor';
 import nodeGenerator from './nodes';
 import * as links from './links';
 import style from './styles/index.css';// eslint-disable-line no-unused-vars
+import pallet from './pallet';// eslint-disable-line no-unused-vars
 
 const testNodes = [
   {
