@@ -1,0 +1,18 @@
+div.wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+textarea#output.output {
+    width: 20%;
+    float:left;
+}
+
+div.pallet {
+    width: 20%;
+    float:left;
+}
+div.canvas {
+  width: 60%;
+  float:right;
+}

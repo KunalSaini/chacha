@@ -2,6 +2,7 @@ import _ from 'lodash';
 import editor from './editor';
 import nodeGenerator from './nodes';
 import * as links from './links';
+import style from './styles/index.css';// eslint-disable-line no-unused-vars
 
 const testNodes = [
   {
@@ -9,8 +10,8 @@ const testNodes = [
     z: 'auto.flow346',
     name: 'GreaterThenEqual',
     topic: '',
-    x: 300,
-    y: 300,
+    x: 200,
+    y: 200,
     inputs: '2',
     outputs: '2',
     type: 'debug',
@@ -54,7 +55,7 @@ testNodes.push({
   name: 'NewNode',
   topic: '',
   x: 100,
-  y: 300,
+  y: 200,
   inputs: '2',
   outputs: '2',
   type: 'debug',
