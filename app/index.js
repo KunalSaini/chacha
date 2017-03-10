@@ -47,6 +47,9 @@ const testNodes = [
 ];
 
 function getNextId() {
+  if (testNodes.length === 0) {
+    return '100';
+  }
   const maxId = _.maxBy(testNodes, n => parseInt(n.id, 10)).id;
   return `${parseInt(maxId, 10) + 1}`;
 }

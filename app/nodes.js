@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import _ from 'lodash';
 import appEvents from './appEvents';
 import trace from './trace';
-import nodeStyle from './styles/nodes.css';  // eslint-disable-line no-unused-vars
+import './styles/nodes.css';
 
 let nodeRep = [];
 let nodeEditor = {};
@@ -109,7 +109,6 @@ appEvents.on(appEvents.nodesConnected, (startNode, endNode) => {
   } else {
     node.wires[startNode.port - 1] = [{ node: endNode.id, port: endNode.port }];
   }
-  trace(nodeRep);
 });
 
 export { generateNodesOn as default };
