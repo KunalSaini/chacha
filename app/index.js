@@ -18,7 +18,16 @@ const testNodes = [
     outputs: '2',
     type: 'debug',
     active: true,
-    wires: [],
+    wires: [[{
+      node: '851',
+      port: 1,
+    }, {
+      node: '852',
+      port: 1,
+    }], [{
+      node: '851',
+      port: 2,
+    }]],
   }, {
     id: '851',
     z: 'auto.flow346',
@@ -55,28 +64,28 @@ function getNextId() {
 }
 
 nodeGenerator(editor, testNodes);
-links.init(editor);
+links.init(editor, testNodes);
 
 // simulate dynamically adding and removing nodes
 
-testNodes.push({
-  id: '855',
-  z: 'auto.flow346',
-  name: 'NewNode',
-  topic: '',
-  x: 100,
-  y: 200,
-  inputs: '2',
-  outputs: '2',
-  type: 'debug',
-  active: true,
-  wires: [],
-});
-
-nodeGenerator(editor, testNodes);
-_.remove(testNodes, n => n.id === '851');
-nodeGenerator(editor, testNodes);
-links.update(editor);
+// testNodes.push({
+//   id: '855',
+//   z: 'auto.flow346',
+//   name: 'NewNode',
+//   topic: '',
+//   x: 100,
+//   y: 200,
+//   inputs: '2',
+//   outputs: '2',
+//   type: 'debug',
+//   active: true,
+//   wires: [],
+// });
+//
+// nodeGenerator(editor, testNodes);
+// _.remove(testNodes, n => n.id === '851');
+// nodeGenerator(editor, testNodes);
+// links.update(editor);
 
 appEvents.on(appEvents.nodeAdd, (node) => {
   node.id = getNextId(); // eslint-disable-line no-param-reassign

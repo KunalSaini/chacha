@@ -22,7 +22,7 @@ function dragged(d) {
   d.y = d3.event.y; // eslint-disable-line no-param-reassign
   g.attr('transform', `translate(${d3.event.x},${d3.event.y})`);
   trace(nodeRep);
-  appEvents.emit(appEvents.nodeMoved, getNodeIdFromGroup(g), g.node().getCTM());
+  appEvents.emit(appEvents.nodeMoved, getNodeIdFromGroup(g));
 }
 
 function dragended() {

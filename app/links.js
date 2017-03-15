@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import _ from 'lodash';
 import appEvents from './appEvents';
 import './styles/links.css';
 
@@ -17,30 +18,43 @@ function getLineCoordinates(x1, y1, x2, y2) {
   const c4 = parseInt(y2 || 0, 10) - (scaleY * nodeHeight);
   return `M ${x1} ${y1} C ${c1} ${c2} ${c3} ${c4} ${x2} ${y2}`;
 }
-function updateLines(nodeId, ctm) {
+
+function drawWire(startNode1, endNode) {
+  const svg = d3.select('svg').node();
+  let startPoint = svg.createSVGPoint();
+  let endPoint = svg.createSVGPoint();
+  const outport = d3.select(`#outputPort_${startNode1.id}_${startNode1.port}`);
+  const inport = d3.select(`#inputPort_${endNode.id}_${endNode.port}`);
+  startPoint.x = outport.attr('cx');
+  startPoint.y = outport.attr('cy');
+  endPoint.x = inport.attr('x');
+  endPoint.y = inport.attr('y');
+  const targetCTM = d3.select(`#node_${endNode.id}`).node().getCTM();
+  endPoint = endPoint.matrixTransform(targetCTM);
+  const sourceCTM = d3.select(`#node_${startNode1.id}`).node().getCTM();
+  startPoint = startPoint.matrixTransform(sourceCTM);
+  const line = d3.select(`#line_${startNode1.id}_${startNode1.port}_${endNode.id}_${endNode.port}`);
+  if (line.empty()) {
+    d3.select('svg')
+        .append('path')
+        .datum({
+          endNode,
+          startNode: startNode1,
+        })
+        .attr('id', `line_${startNode1.id}_${startNode1.port}_${endNode.id}_${endNode.port}`)
+        .attr('class', 'line')
+        .attr('d', () => getLineCoordinates(startPoint.x, startPoint.y, endPoint.x, endPoint.y));
+  } else {
+    line.attr('d', () => getLineCoordinates(startPoint.x, startPoint.y, endPoint.x, endPoint.y));
+  }
+}
+
+function updateLines(nodeId) {
   d3.selectAll('path').each((lineData) => {
     if (lineData) {
-      if (lineData.startNode.id === nodeId || lineData.endNode.id === nodeId) {
-        const svg = d3.select('svg').node();
-        let startPoint = svg.createSVGPoint();
-        const line = d3.select(`#line_${lineData.startNode.id}_${lineData.startNode.port}_${lineData.endNode.id}_${lineData.endNode.port}`);
-        let endPoint = svg.createSVGPoint();
-        const outport = d3.select(`#outputPort_${lineData.startNode.id}_${lineData.startNode.port}`);
-        const inport = d3.select(`#inputPort_${lineData.endNode.id}_${lineData.endNode.port}`);
-        startPoint.x = outport.attr('cx');
-        startPoint.y = outport.attr('cy');
-        endPoint.x = inport.attr('x');
-        endPoint.y = inport.attr('y');
-        if (lineData.startNode.id === nodeId) {
-          const targetCTM = d3.select(`#node_${lineData.endNode.id}`).node().getCTM();
-          endPoint = endPoint.matrixTransform(targetCTM);
-          startPoint = startPoint.matrixTransform(ctm);
-        } else {
-          const targetCTM = d3.select(`#node_${lineData.startNode.id}`).node().getCTM();
-          endPoint = endPoint.matrixTransform(ctm);
-          startPoint = startPoint.matrixTransform(targetCTM);
-        }
-        line.attr('d', getLineCoordinates(startPoint.x, startPoint.y, endPoint.x, endPoint.y));
+      if (lineData.startNode.id.toString() === nodeId.toString() ||
+      lineData.endNode.id.toString() === nodeId.toString()) {
+        drawWire(lineData.startNode, lineData.endNode);
       }
     }
   });
@@ -48,7 +62,8 @@ function updateLines(nodeId, ctm) {
 function removeLines(nodeId) {
   d3.selectAll('path').each((lineData) => {
     if (lineData) {
-      if (lineData.startNode.id === nodeId || lineData.endNode.id === nodeId) {
+      if (lineData.startNode.id.toString() === nodeId.toString() ||
+      lineData.endNode.id.toString() === nodeId.toString()) {
         d3.select(`#line_${lineData.startNode.id}_${lineData.startNode.port}_${lineData.endNode.id}_${lineData.endNode.port}`).remove();
       }
     }
@@ -115,11 +130,28 @@ const portDragBehavior = d3.drag()
   .on('end', dragended);
 
 
-function init(editor) {
+function init(editor, nodes) {
   editor.append('path')
     .attr('id', 'dummyPath')
     .attr('d', getLineCoordinates(0, 0, 0, 0));
 
+  _.forEach(nodes, (node) => {
+    if (node.wires && node.wires.length > 0) {
+      _.forEach(node.wires, (wire, index) => {
+        if (Array.isArray(wire)) {
+          _.forEach(wire, (outlet) => {
+            const sourceNode = { id: node.id, port: index + 1 };
+            const targetNode = { id: outlet.node, port: outlet.port };
+            drawWire(sourceNode, targetNode);
+          });
+        } else {
+          const sourceNode = { id: node.id, port: index + 1 };
+          const targetNode = { id: wire.node, port: wire.port };
+          drawWire(sourceNode, targetNode);
+        }
+      });
+    }
+  });
   editor.selectAll('.outputPorts').call(portDragBehavior);
 }
 function update(editor) {
